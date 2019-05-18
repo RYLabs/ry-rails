@@ -12,6 +12,7 @@ def apply_template!
 
   template 'Gemfile.tt', force: true
   template 'README.md.tt', force: true
+
   apply 'config/template.rb'
   apply 'app/template.rb'
 
@@ -23,6 +24,8 @@ def apply_template!
     generate "cancan:ability"
 
     run 'bundle binstubs bundler --force'
+
+    setup_docker
 
     rails_command "db:create db:migrate"
   end
@@ -60,6 +63,12 @@ def gemfile_requirement(name)
   @original_gemfile ||= IO.read("Gemfile")
   req = @original_gemfile[/gem\s+['"]#{name}['"]\s*(,[><~= \t\d\.\w'"]*)?.*$/, 1]
   req && req.gsub("'", %(")).strip.sub(/^,\s*"/, ', "')
+end
+
+def setup_docker
+  template 'Dockerfile.tt'
+  copy_file 'docker-compose.rails.yml', 'docker-compose.yml'
+  copy_file 'entrypoint.sh'
 end
 
 # launch the main template creation method
