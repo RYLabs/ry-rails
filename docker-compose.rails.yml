@@ -6,7 +6,7 @@ services:
       - ./tmp/db:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-  rails:
+  web:
     build: .
     volumes:
       - .:/myapp
