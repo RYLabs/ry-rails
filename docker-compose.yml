@@ -1,0 +1,14 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    #volumes:
+    #  - ./tmp/db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  rails:
+    build: .
+    volumes:
+      - .:/myapp
+    depends_on:
+      - db 
