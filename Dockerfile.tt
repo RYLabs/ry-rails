@@ -1,11 +1,16 @@
 FROM ruby:<%= RUBY_VERSION %>
 
 # Install system dependencies
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
-RUN apt-get update -qq && apt-get install -y nodejs postgresql-client
+RUN apt-get update -qq && apt-get install -y postgresql-client
 
-# Install Yarn
-RUN curl -o- -L https://yarnpkg.com/install.sh | bash
+# Install Node
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - ;\
+    apt-get update -qq && apt-get install -y nodejs
+
+# Yarn
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - ;\
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list ;\
+    apt-get update -qq && apt-get install -y yarn
 
 # Setup project directory
 RUN mkdir /myapp

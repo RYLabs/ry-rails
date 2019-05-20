@@ -8,6 +8,7 @@ TEMPLATE_REPO = "https://github.com/RYLab/ry-rails"
 
 def apply_template!
   assert_minimum_rails_version
+  assert_yarn_installed
   add_template_repository_to_source_path
 
   template 'Gemfile.tt', force: true
@@ -39,6 +40,13 @@ def assert_minimum_rails_version
   prompt = "This template requires Rails #{RAILS_REQUIREMENT}. "\
            "You are using #{rails_version}. Continue anyway?"
   exit 1 if no?(prompt)
+end
+
+def assert_yarn_installed
+  if !system "bash --login -c 'yarn -v'"
+    prompt = "This template requires Yarn. Continue anyway?"
+    exit 1 if no?(prompt)
+  end
 end
 
 # Add this template directory to source_paths so that Thor actions like
