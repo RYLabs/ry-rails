@@ -4,7 +4,7 @@
 
 This is the Rails template I used for my Rails 5.2 projects as a freelance developer. Its goal is to allow to begin new rails application easily, with a modern and efficient configuration and with good set of defaults. The project is still very much a work in progress. So do not expect it to be 100% bug free. [Contributions][], ideas and help are really welcome.
 
-This project is inspired by the template developed by Damien Le Thiec. Have a look [here][] to compare both.
+This project is inspired by the template developed by Damien Le Thiec. Have a look [here](https://github.com/damienlethiec/modern-rails-template) to compare both.
 
 ## Requirements
 
@@ -19,7 +19,7 @@ This template currently works with:
 The super easy way:
 
 ```
-\curl https://raw.githubusercontent.com/RYLabs/ry-rails/master/install | bash -s <name_of_app>
+\curl -sSL https://raw.githubusercontent.com/RYLabs/ry-rails/master/install | bash -s <name_of_app>
 ```
 
 Or, taking the more scenic route:
@@ -66,9 +66,9 @@ Below is an extract of what this generator does. You can check all the features 
 ### Standard configuration
 
 * Change the default generators config (cf `config/initializers/generators.rb`)
-* Add [devise][] for authentication
-* Add [cancancan][] for authorization
-* Add [awesome-print][] for easier exploration in the terminal
+* Add [devise](https://github.com/plataformatec/devise) for authentication
+* Add [cancancan](https://github.com/CanCanCommunity/cancancan) for authorization
+* Add [awesome-print](https://github.com/awesome-print/awesome_print) for easier exploration in the terminal
 
 ### Additional options
 
