@@ -11,4 +11,6 @@ services:
     volumes:
       - .:/myapp
     depends_on:
-      - db 
+      - db
+    environment:
+      - DATABASE_HOST=db
