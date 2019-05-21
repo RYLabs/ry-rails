@@ -1,4 +1,4 @@
-FROM ruby:2.6
+FROM ruby:2.6.2
 
 # NodeJS
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - ;\
