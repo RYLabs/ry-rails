@@ -4,7 +4,7 @@ require "tmpdir"
 
 RUBY_VERSION = "2.6.2"
 RAILS_REQUIREMENT = ">= 5.2.3"
-TEMPLATE_REPO = "https://github.com/RYLab/ry-rails"
+TEMPLATE_REPO = "https://github.com/RYLabs/ry-rails"
 
 def apply_template!
   assert_minimum_rails_version
