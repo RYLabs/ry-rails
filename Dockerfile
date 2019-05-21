@@ -18,4 +18,4 @@ RUN bundle install
 RUN rm Gemfile
 
 WORKDIR /myapp
-CMD ["rails", "new", "test-rails-app", "--skip-coffee", "--webpack", "-d", "postgresql", "-T", "-m", "template.rb"]
+CMD ["rails", "new", "example-app", "--skip-coffee", "--webpack", "-d", "postgresql", "-T", "-m", "template.rb"]
