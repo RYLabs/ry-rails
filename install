@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -o errtrace
+set -o errexit
+
+rails new "$0" --skip-coffee --webpack -d postgresql -T -m https://raw.githubusercontent.com/RYLabs/ry-rails/master/template.rb
