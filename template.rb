@@ -27,6 +27,7 @@ def apply_template!
     run 'bundle binstubs bundler --force'
 
     setup_docker
+    setup_seeds
 
     rails_command "db:create db:migrate"
   end
@@ -77,6 +78,11 @@ def setup_docker
   template 'Dockerfile.tt'
   copy_file 'docker-compose.rails.yml', 'docker-compose.yml'
   copy_file 'entrypoint.sh'
+end
+
+def setup_seeds
+  copy_file 'db/seeds.rb'
+  copy_file 'db/seeds/01_create_users.rb'
 end
 
 # launch the main template creation method
