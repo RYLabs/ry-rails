@@ -65,7 +65,7 @@ Below is an extract of what this generator does. You can check all the features 
 
 ### Standard configuration
 
-* Change the default generators config (cf `config/initializers/generators.rb`)
+* Change the default generators config (`config/initializers/generators.rb`)
 * Add [devise](https://github.com/plataformatec/devise) for authentication
 * Add [cancancan](https://github.com/CanCanCommunity/cancancan) for authorization
 * Add [awesome-print](https://github.com/awesome-print/awesome_print) for easier exploration in the terminal
