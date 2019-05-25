@@ -1,1 +1,40 @@
-<h1>Hello from <%= Rails.application.class.parent_name %>!</h1>
+<style>
+  @import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+
+  html, body {
+    height: 100%; width: 100%;
+    margin: 0; padding: 0;
+  }
+  body {
+    background-image: url('https://source.unsplash.com/random/1600x794');
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  content {
+    height: 100%; width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .inner-content {
+    background-color: rgba(0,0,0,0.6);
+    border-radius: 4px;
+    padding: 2em;
+    text-align: center;
+  }
+  a, a:link, a:active, a:visited, a:hover {
+    color: white;
+  }
+  h1 {
+    color: white;
+    display: block;
+    font-family: 'Lato', sans-serif;
+    margin: 1em auto;
+  }
+</style>
+<content>
+  <div class="inner-content">
+    <h1>Hello from <%= Rails.application.class.parent_name %>!</h1>
+    <%= link_to 'Login', new_user_session_path %>
+  </div>
+</content>
