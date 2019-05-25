@@ -78,3 +78,8 @@ gem 'devise'
 
 # Use CanCanCan for authorization
 gem 'cancancan'
+
+  # GraphQL
+gem 'graphql'
+gem 'graphiql-rails', group: :development
+gem 'devise-token_authenticatable'

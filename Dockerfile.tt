@@ -16,10 +16,11 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - ;\
 RUN mkdir /myapp
 WORKDIR /myapp
 
-# Install Rails dependencies
-COPY Gemfile /myapp/Gemfile
-COPY Gemfile.lock /myapp/Gemfile.lock
+# Install Bundler 2
 RUN gem install bundler
+
+# Seeding base Rails gems to speed template execution
+COPY Gemfile /myapp
 RUN bundle install
 COPY . /myapp
 
@@ -28,6 +29,8 @@ COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 3000
+
+ENV YARN_CACHE_FOLDER=/myapp/tmp/cache/yarn
 
 # Start the main process.
 CMD ["rails", "server", "-b", "0.0.0.0"]

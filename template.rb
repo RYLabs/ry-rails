@@ -17,19 +17,19 @@ def apply_template!
   apply 'config/template.rb'
   apply 'app/template.rb'
 
+  ask_optional_options
+
+  install_optional_gems
+
   after_bundle do
-    generate 'rspec:install'
-    generate "devise:install"
-    generate "devise", "User"
-    generate "devise:views"
-    generate "cancan:ability"
+    setup_gems
 
     run 'bundle binstubs bundler --force'
 
     setup_docker
     setup_seeds
 
-    rails_command "db:create db:migrate"
+    rails_command 'db:create db:migrate'
   end
 end
 
@@ -74,10 +74,88 @@ def gemfile_requirement(name)
   req && req.gsub("'", %(")).strip.sub(/^,\s*"/, ', "')
 end
 
+def ask_optional_options
+  @graphql = yes?('Do you want to add GraphQL to your app?')
+end
+
+def install_optional_gems
+  add_graphql if @graphql
+end
+
+def add_graphql
+  insert_into_file 'Gemfile', <<GEMFILE, after: /'cancancan'\n/
+
+  # GraphQL
+gem 'graphql'
+gem 'graphiql-rails', group: :development
+gem 'devise-token_authenticatable'
+GEMFILE
+end
+
+def setup_gems
+  generate "rspec:install"
+
+  setup_devise
+  setup_cancancan
+  setup_graphql if @graphql
+end
+
+def setup_devise
+  generate "model", "User", "first_name:string", "last_name:string"
+  generate "devise:install"
+  generate "devise", "User"
+  generate "devise:views"
+end
+
+def setup_cancancan
+  generate "cancan:ability"
+end
+
+def setup_graphql
+  generate "graphql:install"
+
+  copy_file 'app/graphql/types/user_type.rb'
+  copy_file 'app/graphql/types/auth_type.rb'
+  copy_file 'app/graphql/types/query_type.rb', force: true
+  copy_file 'app/graphql/types/mutation_type.rb', force: true
+
+  copy_file 'app/graphql/mutations/base_mutation.rb'
+  copy_file 'app/graphql/mutations/sign_in.rb'
+
+  copy_file 'app/controllers/concerns/api_context.rb'
+
+  copy_file 'config/initializers/token_authenticatable.rb'
+
+  generate 'migration', 'add_authentication_token_to_users'
+  migration_file = Dir.glob('db/migrate/*_add_authentication_token_to_users.rb').first
+  insert_into_file(migration_file, <<MIGRATION, after: /def change\n/)
+    add_column :users, :authentication_token, :text
+    add_column :users, :authentication_token_created_at, :datetime
+    add_index :users, :authentication_token, unique: true
+MIGRATION
+
+  # app_schema.rb
+  insert_into_file "app/graphql/#{app_name.underscore}_schema.rb",
+    "  context_class(#{app_name.underscore.classify}Context)\n",
+    after: /query\(Types::QueryType\)\n/
+
+  # app_context.rb
+  template "app/graphql/context.rb.tt", "app/graphql/#{app_name.underscore}_context.rb"
+
+  # graphql_controller.rb
+  insert_into_file 'app/controllers/graphql_controller.rb', "  include APIContext\n", after: /< ApplicationController\n/
+  gsub_file 'app/controllers/graphql_controller.rb', /context = \{.*?\}/m, 'context = build_api_context'
+
+  # user.rb
+  insert_into_file 'app/models/user.rb',
+    ",\n         :token_authenticatable\n",
+    after: /, :validatable/
+end
+
 def setup_docker
   template 'Dockerfile.tt'
-  copy_file 'docker-compose.rails.yml', 'docker-compose.yml'
-  copy_file 'entrypoint.sh'
+  template 'docker-compose.yml.tt'
+  template 'entrypoint.sh.tt'
 end
 
 def setup_seeds
