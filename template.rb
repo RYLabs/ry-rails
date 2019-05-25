@@ -81,7 +81,7 @@ def setup_docker
 end
 
 def setup_seeds
-  copy_file 'db/seeds.rb'
+  copy_file 'db/seeds.rb', force: true
   copy_file 'db/seeds/01_create_users.rb'
 end
 
