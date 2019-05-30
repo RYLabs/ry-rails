@@ -16,3 +16,7 @@ services:
       - db 
     environment:
       - DATABASE_HOST=db
+      - YARN_CACHE_FOLDER=/myapp/tmp/cache/yarn
+      - HOST=0.0.0.0
+      - PORT=3000
+
