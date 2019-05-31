@@ -13,6 +13,7 @@ def apply_template!
 
   template 'Gemfile.tt', force: true
   template 'README.md.tt', force: true
+  template '.env.example.tt'
 
   apply 'config/template.rb'
   apply 'app/template.rb'
@@ -76,19 +77,29 @@ end
 
 def ask_optional_options
   @graphql = yes?('Do you want to add GraphQL to your app?')
+  @sentry = yes?('Do you want to add Sentry to your app?')
 end
 
 def install_optional_gems
   add_graphql if @graphql
+  add_sentry  if @sentry
 end
 
 def add_graphql
   insert_into_file 'Gemfile', <<GEMFILE, after: /'cancancan'\n/
 
-  # GraphQL
+# GraphQL
 gem 'graphql'
 gem 'graphiql-rails', group: :development
 gem 'devise-token_authenticatable'
+GEMFILE
+end
+
+def add_sentry
+  insert_into_file 'Gemfile', <<GEMFILE, after: /'cancancan'\n/
+
+# Sentry (error reporting)
+gem 'sentry-raven'
 GEMFILE
 end
 
@@ -98,6 +109,7 @@ def setup_gems
   setup_devise
   setup_cancancan
   setup_graphql if @graphql
+  setup_sentry  if @sentry
 end
 
 def setup_devise
@@ -150,6 +162,14 @@ MIGRATION
   insert_into_file 'app/models/user.rb',
     ",\n         :token_authenticatable\n",
     after: /, :validatable/
+end
+
+def setup_sentry
+  append_to_file '.env.example', <<DOTENV
+
+# Set DSN to enable Sentry
+#SENTRY_DSN=http://public@example.com/project-id
+DOTENV
 end
 
 def setup_docker
