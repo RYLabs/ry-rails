@@ -12,11 +12,7 @@ def apply_template!
   add_template_repository_to_source_path
 
   template 'README.md.tt', force: true
-  create_file 'env.example' do <<FILE
-# This is an example of a .env file for your local environment.  Copy this file to .env
-# and make changes to fit your development environment.
-FILE
-  end
+  template '.env.example.tt'
 
   apply 'config/template.rb'
   apply 'app/template.rb'
@@ -80,6 +76,7 @@ end
 
 def ask_optional_options
   @graphql = yes?('Do you want to add GraphQL to your app?')
+  @sentry = yes?('Do you want to add Sentry to your app?')
 end
 
 def install_optional_gems
@@ -87,6 +84,7 @@ def install_optional_gems
   add_devise
   add_cancancan
   add_graphql if @graphql
+  add_sentry  if @sentry
 end
 
 def add_devise
@@ -113,6 +111,10 @@ def add_graphql
   gem 'devise-token_authenticatable', '~> 1.1.0'
 end
 
+def add_sentry
+  gem 'sentry-raven'
+end
+
 def setup_gems
   run 'spring stop' # https://github.com/rspec/rspec-rails/issues/1665#issuecomment-408783989
   generate "rspec:install"
@@ -120,6 +122,7 @@ def setup_gems
   setup_devise
   setup_cancancan
   setup_graphql if @graphql
+  setup_sentry  if @sentry
 end
 
 def setup_devise
@@ -173,6 +176,14 @@ MIGRATION
   insert_into_file 'app/models/user.rb',
     ",\n         :token_authenticatable\n",
     after: /, :validatable/
+end
+
+def setup_sentry
+  append_to_file '.env.example', <<DOTENV
+
+# Set DSN to enable Sentry
+#SENTRY_DSN=http://public@example.com/project-id
+DOTENV
 end
 
 def setup_docker
