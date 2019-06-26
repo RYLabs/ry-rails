@@ -19,15 +19,20 @@ WORKDIR /myapp
 # Install Bundler 2
 RUN gem install bundler
 
-# Seeding base Rails gems to speed template execution
+# Installing Gems
 COPY Gemfile /myapp
+COPY Gemfile.lock /myapp
 RUN bundle install
-COPY . /myapp
+
+# Uncomment line below to package the project into the docker image.
+# This is commented out to speed up image builds. Packaging the project
+# is not necessary for local development since we mount it at runtime.
+#COPY . /myapp
 
 # Add a script to be executed every time the container starts.
 COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["sh", "entrypoint.sh"]
 EXPOSE 3000
 
 # Start the main process.
