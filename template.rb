@@ -11,7 +11,6 @@ def apply_template!
   assert_yarn_installed
   add_template_repository_to_source_path
 
-  template 'Gemfile.tt', force: true
   template 'README.md.tt', force: true
   create_file 'env.example' do <<FILE
 # This is an example of a .env file for your local environment.  Copy this file to .env
@@ -27,6 +26,12 @@ FILE
   install_optional_gems
 
   after_bundle do
+    # for some reason, we fail here unless we run bundler again to install minitest
+    run 'bundle install'
+
+    # get rid of annoying tzinfo-data warning when running bundler
+    run 'bundle lock --add-platform x86-mingw32 x86-mswin32 x64-mingw32 java'
+
     setup_gems
 
     run 'bundle binstubs bundler --force'
@@ -73,31 +78,43 @@ def add_template_repository_to_source_path
   end
 end
 
-def gemfile_requirement(name)
-  @original_gemfile ||= IO.read("Gemfile")
-  req = @original_gemfile[/gem\s+['"]#{name}['"]\s*(,[><~= \t\d\.\w'"]*)?.*$/, 1]
-  req && req.gsub("'", %(")).strip.sub(/^,\s*"/, ', "')
-end
-
 def ask_optional_options
   @graphql = yes?('Do you want to add GraphQL to your app?')
 end
 
 def install_optional_gems
+  add_developer_tools
+  add_devise
+  add_cancancan
   add_graphql if @graphql
 end
 
-def add_graphql
-  insert_into_file 'Gemfile', <<GEMFILE, after: /'cancancan'\n/
+def add_devise
+  gem 'devise', '~> 4.6.2'
+end
 
-  # GraphQL
-gem 'graphql'
-gem 'graphiql-rails', group: :development
-gem 'devise-token_authenticatable'
-GEMFILE
+def add_cancancan
+  gem 'cancancan', '~> 3.0.1'
+end
+
+def add_developer_tools
+  gem_group :development, :test do
+    gem 'rspec-rails', '~> 3.8.2'
+    gem 'ffaker', '~> 2.11.0'
+    gem 'dotenv-rails', '~> 2.7.5'
+    gem 'pry-rails', '~> 0.3.9'
+    gem 'awesome_print', '~> 1.8.0'
+    gem 'factory_bot_rails', '~> 5.0.2'
+  end
+end
+
+def add_graphql
+  gem 'graphql', '~> 1.9.9'
+  gem 'devise-token_authenticatable', '~> 1.1.0'
 end
 
 def setup_gems
+  run 'spring stop' # https://github.com/rspec/rspec-rails/issues/1665#issuecomment-408783989
   generate "rspec:install"
 
   setup_devise
@@ -118,6 +135,7 @@ end
 
 def setup_graphql
   generate "graphql:install"
+  run "bundle install" # install graphiql-rails
 
   copy_file 'app/graphql/types/user_type.rb'
   copy_file 'app/graphql/types/auth_type.rb'
