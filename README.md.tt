@@ -6,7 +6,8 @@ This is a Rails <%= Rails::VERSION::MAJOR %> app created using [ry-rails][]. Ple
 
 ### Prerequisites
 
-<TODO>
+- PostgreSQL
+
 
 ### Setup
 
@@ -32,12 +33,19 @@ There is also a `runner` service for executing commands from the console (`rails
 docker-compose run --rm runner
 ```
 
+## Starting Up
+
+```bash
+rails s
+```
+
 ## Usage
 
 ### Login Information
 
 - Email: <TBD>
 - Password: <TBD>
+
 
 ## References
 
