@@ -13,6 +13,11 @@ def apply_template!
 
   template 'Gemfile.tt', force: true
   template 'README.md.tt', force: true
+  create_file 'env.example' do <<FILE
+# This is an example of a .env file for your local environment.  Copy this file to .env
+# and make changes to fit your development environment.
+FILE
+  end
 
   apply 'config/template.rb'
   apply 'app/template.rb'
