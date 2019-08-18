@@ -1,16 +1,35 @@
-version: '3'
+version: '3.7'
 services:
   db:
-    image: postgres
-    #volumes:
-    #  - ./tmp/db:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-  rails:
-    build: .
+    image: postgres:alpine
+  app: &app
+    build:
+      context: .
+      args:
+        RAILS_VERSION: '5.2.3'
+        RUBY_VERSION: '2.6.2'
+        BUNDLER_VERSION: '2.0.2'
+    tmpfs:
+      - /tmp
+  backend: &backend
+    <<: *app
+    stdin_open: true
+    tty: true
     volumes:
       - .:/myapp
+      - ./tmp:/myapp/tmp:delegated
+    environment:
+      DATABASE_HOST: db
+      DATABASE_USER: postgres
+      HISTFILE: /myapp/tmp/.bash_history
+      PSQL_HISTFILE: /myapp/tmp/.psql_history
+      RAILS_TEMPLATE: /myapp/template.rb
     depends_on:
       - db
-    environment:
-      - DATABASE_HOST=db
+  runner:
+    <<: *backend
+    command: /bin/bash
+  new:
+    <<: *backend
+    command: /myapp/install
+    working_dir: /myapp/tmp

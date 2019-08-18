@@ -1,27 +1,21 @@
-FROM ruby:2.6.2
+ARG RUBY_VERSION
+FROM ruby:${RUBY_VERSION}-alpine
 
-# NodeJS
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - ;\
-    apt-get update -qq && apt-get install -y nodejs
+ARG BUNDLER_VERSION
+ARG RAILS_VERSION
 
-# Yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - ;\
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list ;\
-    apt-get update -qq && apt-get install -y yarn
+# Install system dependencies
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+  && apk update \
+  && apk add --no-cache postgresql-client postgresql-dev nodejs \
+    libffi-dev readline build-base libc-dev linux-headers \
+    libxml2-dev libxslt-dev gcc tzdata less bash yarn git
 
-# Bundler
-RUN gem install bundler
-
-# Seeding base Rails gems to speed template execution
-COPY Gemfile.seed Gemfile
-RUN bundle install
-RUN rm Gemfile Gemfile.lock
+# Bundler & Rails
+RUN gem update --system \
+    && gem install bundler:${BUNDLER_VERSION} \
+    && gem install rails:${RAILS_VERSION}
 
 # Setup project directory
 RUN mkdir /myapp
 WORKDIR /myapp
-COPY . .
-
-ENV YARN_CACHE_FOLDER=/myapp/tmp/yarn-cache
-
-CMD ["rails", "new", "example-app", "--skip-coffee", "--webpack", "-d", "postgresql", "-T", "-m", "template.rb"]
