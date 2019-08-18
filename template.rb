@@ -178,7 +178,6 @@ end
 def setup_docker
   template 'Dockerfile.tt'
   template 'docker-compose.yml.tt'
-  template 'entrypoint.sh.tt'
 end
 
 def setup_seeds

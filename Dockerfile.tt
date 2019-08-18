@@ -1,34 +1,29 @@
-FROM ruby:<%= RUBY_VERSION %>
+ARG RUBY_VERSION
+FROM ruby:${RUBY_VERSION}-alpine
+
+ARG BUNDLER_VERSION
 
 # Install system dependencies
-RUN apt-get update -qq && apt-get install -y postgresql-client
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+  && apk update \
+  && apk add --no-cache postgresql-client postgresql-dev nodejs \
+    libffi-dev readline build-base libc-dev linux-headers \
+    libxml2-dev libxslt-dev gcc tzdata less bash yarn
 
-# Install Node
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - ;\
-    apt-get update -qq && apt-get install -y nodejs
+# Configure bundler and PATH
+ENV LANG=C.UTF-8 \
+  GEM_HOME=/bundle \
+  BUNDLE_JOBS=4 \
+  BUNDLE_RETRY=3
+ENV BUNDLE_PATH $GEM_HOME
+ENV BUNDLE_APP_CONFIG=$BUNDLE_PATH \
+  BUNDLE_BIN=$BUNDLE_PATH/bin
+ENV PATH /myapp/bin:$BUNDLE_BIN:$PATH
 
-# Yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - ;\
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list ;\
-    apt-get update -qq && apt-get install -y yarn
+# Upgrade RubyGems and install required Bundler version
+RUN gem update --system && \
+    gem install bundler:$BUNDLER_VERSION
 
 # Setup project directory
 RUN mkdir /myapp
 WORKDIR /myapp
-
-# Install Bundler 2
-RUN gem install bundler
-
-# Seeding base Rails gems to speed template execution
-COPY Gemfile /myapp
-RUN bundle install
-COPY . /myapp
-
-# Add a script to be executed every time the container starts.
-COPY entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
-ENTRYPOINT ["entrypoint.sh"]
-EXPOSE 3000
-
-# Start the main process.
-CMD ["rails", "server"]

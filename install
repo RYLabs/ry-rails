@@ -2,4 +2,9 @@
 set -o errtrace
 set -o errexit
 
-rails new "$@" --skip-coffee --webpack -d postgresql -T -m https://raw.githubusercontent.com/RYLabs/ry-rails/master/template.rb
+echo "Enter the name of the Rails application:"
+read app_name
+
+RAILS_TEMPLATE="${RAILS_TEMPLATE:-https://raw.githubusercontent.com/RYLabs/ry-rails/master/template.rb}"
+
+rails new "${app_name}" --skip-coffee -d postgresql --skip-test --template=${RAILS_TEMPLATE}

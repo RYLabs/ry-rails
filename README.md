@@ -19,7 +19,7 @@ This template currently works with:
 The super easy way:
 
 ```
-\curl -sSL https://raw.githubusercontent.com/RYLabs/ry-rails/master/install | bash -s <name_of_app>
+\curl -sSL https://raw.githubusercontent.com/RYLabs/ry-rails/master/install | bash
 ```
 
 Or, taking the more scenic route:
@@ -29,8 +29,8 @@ rails new <name_of_app> \
   --skip-coffee \
   --webpack \
   -d postgresql \
-  -T \
-  -m https://raw.githubusercontent.com/RYLabs/ry-rails/master/template.rb
+  --skip-test \
+  --template=https://raw.githubusercontent.com/RYLabs/ry-rails/master/template.rb
 ```
 
 To make this the default Rails application template on your system, create a `~/.railsrc` file with these contents:
@@ -39,8 +39,8 @@ To make this the default Rails application template on your system, create a `~/
 --skip-coffee
 --webpack
 -d postgresql
--T
--m https://raw.githubusercontent.com/RYLabs/ry-rails/master/template.rb
+--skip-test
+--template=https://raw.githubusercontent.com/RYLabs/ry-rails/master/template.rb
 ```
 
 Then all you would have to run is:
