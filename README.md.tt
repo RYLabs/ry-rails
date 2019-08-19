@@ -6,7 +6,36 @@ This is a Rails <%= Rails::VERSION::MAJOR %> app created using [ry-rails][]. Ple
 
 ### Setup
 
+```bash
+bundle install
+cp .env.example .env
+# Edit .env to work with your local environment
+rails db:setup
+rails db:seed
+```
+
 ### Using Docker for development
+
+This project uses `docker-compose` instead of individual Docker images. You should never run `docker-compose up`, but
+Instead launch the `web` service:
+
+```bash
+docker-compose up web
+```
+
+There is also a `runner` service for executing commands from the console (`rails`, `rake`, `rspec`, etc.):
+
+```bash
+docker-compose run --rm runner
+```
+## Usage
+
+### Login Information
+
+- Email: <TBD>
+- Password: <TBD>
+
+## References
 
 [article]: https://evilmartians.com/chronicles/rails-5-2-active-storage-and-beyond
 [modern-rails-template]: https://github.com/damienlethiec/modern-rails-template
