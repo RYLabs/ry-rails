@@ -4,6 +4,10 @@ This is a Rails <%= Rails::VERSION::MAJOR %> app created using [ry-rails][]. Ple
 
 ## How to use this project
 
+### Prerequisites
+
+<TODO>
+
 ### Setup
 
 ```bash
@@ -11,13 +15,12 @@ bundle install
 cp .env.example .env
 # Edit .env to work with your local environment
 rails db:setup
-rails db:seed
 ```
 
 ### Using Docker for development
 
-This project uses `docker-compose` instead of individual Docker images. You should never run `docker-compose up`, but
-Instead launch the `web` service:
+This project provides a working Docker configuration (using `docker-compose`) that makes it easy to get a
+development environment going. You should never run `docker-compose up`, but instead launch the `web` service:
 
 ```bash
 docker-compose up web
@@ -28,6 +31,7 @@ There is also a `runner` service for executing commands from the console (`rails
 ```bash
 docker-compose run --rm runner
 ```
+
 ## Usage
 
 ### Login Information
