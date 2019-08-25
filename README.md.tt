@@ -21,16 +21,21 @@ rails db:setup
 ### Using Docker for development
 
 This project provides a working Docker configuration (using `docker-compose`) that makes it easy to get a
-development environment going. You should never run `docker-compose up`, but instead launch the `web` service:
-
-```bash
-docker-compose up web
-```
-
-There is also a `runner` service for executing commands from the console (`rails`, `rake`, `rspec`, etc.):
+development environment going. To get started with this setup, run the following command:
 
 ```bash
 docker-compose run --rm runner
+```
+
+The `runner` service will drop you into a bash shell within the Docker runtime environment. This is useful for
+executing commands you would normally do from the command line (`rails`, `rake`, `rspec`, etc.). From here, run
+through the steps from **Setup** section above (for the subdomains, you would still configure that on the host
+machine and not within the Docker container).
+
+After that, to start up Rails, just run:
+
+```bash
+docker-compose up web
 ```
 
 ## Starting Up
