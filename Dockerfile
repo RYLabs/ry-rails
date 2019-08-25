@@ -16,6 +16,9 @@ RUN gem update --system \
     && gem install bundler:${BUNDLER_VERSION} \
     && gem install rails:${RAILS_VERSION}
 
+# Setup Byebug
+COPY .dockerdev/.byebugrc /root/.byebugrc
+
 # Setup project directory
 RUN mkdir /myapp
 WORKDIR /myapp
